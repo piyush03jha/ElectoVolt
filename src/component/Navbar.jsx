@@ -3,14 +3,20 @@ import { Link, NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { IoCartOutline } from "react-icons/io5";
+import { CgClose } from "react-icons/cg";
+import { useState } from "react";
 
 import { SignedOut } from "@clerk/clerk-react";
 import { SignInButton } from "@clerk/clerk-react";
 import { SignedIn } from "@clerk/clerk-react";
 import { UserButton } from "@clerk/clerk-react";
 
-const Navbar = () => {
-  const location = false;
+const Navbar = ({ location, getLocation, setOpenDropdown, Dropdown }) => {
+
+
+  const toggleDropdown = () => {
+    setOpenDropdown(!Dropdown);
+  }
 
   return (
     <div className="bg-white py-3 shadow-2xl">
@@ -26,11 +32,21 @@ const Navbar = () => {
 
           <div className="flex gap-1 cursor-pointer text-gray-700 items-center">
             <MapPin className="text-yellow-400" />
+
             <span className="font-semibold">
-              {location ? <div></div> : "Add Address"}
+              {location ? <div className="-space-y-2">
+                <p>{location.country}</p>
+                <p>{location.state}</p>
+              </div> : "Add Address"}
             </span>
-            <FontAwesomeIcon icon={faCaretDown} />
+            <FontAwesomeIcon icon={faCaretDown} onClick={toggleDropdown} />
           </div>
+          {
+            Dropdown ? <div className="w-[250px] h-max shadow-2xl z-50 bg-white fixed top-16 left-60 border-2 p-5 border-gray-100 rounded-md">
+              <h1 className="font-semibold mb-4 text-xl flex justify-between">Change Location <span><CgClose onClick={toggleDropdown} /></span></h1>
+              <button onClick={getLocation} className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer hover:bg-red-400 ">Detect Current Location</button>
+            </div> : null
+          }
         </div>
 
         {/* menu section */}

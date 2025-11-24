@@ -6,9 +6,12 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import Navbar from "./component/Navbar";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 const App = () => {
-
+const [location, setLocation] = useState();
+  const [Dropdown, setOpenDropdown] = useState(false);
+  
   const getLocation = async () => {
     navigator.geolocation.getCurrentPosition(async pos => {
       const {latitude, longitude} = pos.coords
@@ -17,16 +20,23 @@ const App = () => {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
       try {
         const location = await axios.get(url)
-        console.log(location);
+        const exactLocation = location.data.address
+        setLocation(exactLocation);
+        setOpenDropdown(false);
+        console.log(exactLocation);
+        
       } catch (error) {
         console.log(error);
       }
     })
   }
+  useEffect(() => {
+    getLocation();
+  }, [])
 
   return (
     <BrowserRouter>
-    <Navbar></Navbar>
+    <Navbar location={location} getLocation={getLocation} setOpenDropdown={setOpenDropdown} Dropdown={Dropdown}></Navbar>
       <Routes>
           <Route path="/" element = {<Home />}></Route>
           <Route path="/products" element = {<Product />}></Route>
